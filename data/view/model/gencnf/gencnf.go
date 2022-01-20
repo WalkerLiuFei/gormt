@@ -8,10 +8,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/mattlaibybit/gormt/data/config"
-	"github.com/mattlaibybit/gormt/data/view/model"
-	"github.com/mattlaibybit/public/mylog"
-	"github.com/mattlaibybit/public/tools"
+	"github.com/xxjwxc/gormt/data/config"
+	"github.com/xxjwxc/gormt/data/view/model"
+	"github.com/xxjwxc/public/mylog"
+	"github.com/xxjwxc/public/tools"
 )
 
 // GetCnfModel get model interface. 获取model接口

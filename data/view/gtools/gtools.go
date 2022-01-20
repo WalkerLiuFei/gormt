@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/mattlaibybit/public/mylog"
+	"github.com/xxjwxc/public/mylog"
 
-	"github.com/mattlaibybit/gormt/data/dlg"
-	"github.com/mattlaibybit/gormt/data/view/model"
+	"github.com/xxjwxc/gormt/data/dlg"
+	"github.com/xxjwxc/gormt/data/view/model"
 
-	"github.com/mattlaibybit/gormt/data/config"
+	"github.com/xxjwxc/gormt/data/config"
 
-	"github.com/mattlaibybit/gormt/data/view/model/genmssql"
-	"github.com/mattlaibybit/gormt/data/view/model/genmysql"
-	"github.com/mattlaibybit/gormt/data/view/model/gensqlite"
-	"github.com/mattlaibybit/public/tools"
+	"github.com/xxjwxc/gormt/data/view/model/genmssql"
+	"github.com/xxjwxc/gormt/data/view/model/genmysql"
+	"github.com/xxjwxc/gormt/data/view/model/gensqlite"
+	"github.com/xxjwxc/public/tools"
 )
 
 // Execute exe the cmd

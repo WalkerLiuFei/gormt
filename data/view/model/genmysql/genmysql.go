@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/mattlaibybit/gormt/data/config"
-	"github.com/mattlaibybit/gormt/data/view/model"
-	"github.com/mattlaibybit/public/mysqldb"
-	"github.com/mattlaibybit/public/tools"
+	"github.com/xxjwxc/gormt/data/config"
+	"github.com/xxjwxc/gormt/data/view/model"
+	"github.com/xxjwxc/public/mysqldb"
+	"github.com/xxjwxc/public/tools"
 )
 
 // MySQLModel mysql model from IModel

@@ -3,7 +3,7 @@ package dlg
 import (
 	"runtime"
 
-	"github.com/mattlaibybit/public/myi18n"
+	"github.com/xxjwxc/public/myi18n"
 )
 
 // WinMain windows main loop

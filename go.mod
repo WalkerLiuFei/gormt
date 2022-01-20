@@ -1,4 +1,4 @@
-module github.com/mattlaibybit/gormt
+module github.com/xxjwxc/gormt
 
 go 1.13
 
@@ -8,7 +8,7 @@ require (
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.3
 	github.com/spf13/cobra v1.0.0
-	github.com/mattlaibybit/public v0.0.0-20210709073023-f6ec6fb9bcb4
+	github.com/xxjwxc/public v0.0.0-20210709073023-f6ec6fb9bcb4
 	golang.org/x/text v0.3.3
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.30.2
@@ -19,4 +19,4 @@ require (
 	gorm.io/gorm v1.21.4
 )
 
-// replace github.com/mattlaibybit/public => ../public
+// replace github.com/xxjwxc/public => ../public

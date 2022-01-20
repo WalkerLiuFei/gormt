@@ -1,6 +1,6 @@
 package generate
 
-import "github.com/mattlaibybit/public/tools"
+import "github.com/xxjwxc/public/tools"
 
 // Add add one to print.打印
 func (p *PrintAtom) Add(str ...interface{}) {

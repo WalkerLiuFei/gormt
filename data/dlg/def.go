@@ -1,8 +1,8 @@
 package dlg
 
 import (
-	"github.com/mattlaibybit/gormt/data/view/genstruct"
-	"github.com/mattlaibybit/public/mycui"
+	"github.com/xxjwxc/gormt/data/view/genstruct"
+	"github.com/xxjwxc/public/mycui"
 )
 
 const (

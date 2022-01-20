@@ -1,5 +1,4 @@
-module github.com/matlaibybit/gormt
+module github.com/mattlaibybit/gormt
 
 go 1.14
 
-replace github.com/xxjwxc/gormt => ./github.com/matlaibybit/gormt

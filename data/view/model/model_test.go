@@ -3,8 +3,9 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/xxjwxc/gormt/data/config"
 	"testing"
+
+	"github.com/mattlaibybit/gormt/data/config"
 )
 
 func TestTypeName(t *testing.T) {

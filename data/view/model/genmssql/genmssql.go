@@ -5,10 +5,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/xxjwxc/gormt/data/config"
-	"github.com/xxjwxc/gormt/data/view/model"
-	"github.com/xxjwxc/public/mylog"
-	"github.com/xxjwxc/public/tools"
+	"github.com/mattlaibybit/gormt/data/config"
+	"github.com/mattlaibybit/gormt/data/view/model"
+	"github.com/mattlaibybit/public/mylog"
+	"github.com/mattlaibybit/public/tools"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )

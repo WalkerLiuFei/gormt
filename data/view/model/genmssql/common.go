@@ -3,10 +3,10 @@ package genmssql
 import (
 	"strings"
 
-	"github.com/xxjwxc/gormt/data/config"
-	"github.com/xxjwxc/public/mylog"
+	"github.com/mattlaibybit/gormt/data/config"
+	"github.com/mattlaibybit/public/mylog"
 
-	"github.com/xxjwxc/gormt/data/view/model"
+	"github.com/mattlaibybit/gormt/data/view/model"
 )
 
 // filterModel filter.过滤 gorm.Model

@@ -74,7 +74,7 @@ var TypeMysqlMatchList = []struct {
 	{`^(varbinary)[(]\d+[)]`, "[]byte"},
 	{`^(blob)[(]\d+[)]`, "[]byte"},
 	{`^(binary)[(]\d+[)]`, "[]byte"},
-	{`^(decimal)[(]\d+,\d+[)]`, "float64"},
+	{`^(decimal)[(]\d+,\d+[)]`, "string"},
 	{`^(mediumint)[(]\d+[)]`, "int16"},
 	{`^(mediumint)[(]\d+[)] unsigned`, "uint16"},
 	{`^(double)[(]\d+,\d+[)]`, "float64"},

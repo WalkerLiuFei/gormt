@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xxjwxc/public/tools"
+	"github.com/mattlaibybit/public/tools"
 )
 
 // Config custom config struct

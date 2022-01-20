@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/xxjwxc/gormt.svg?branch=master)](https://travis-ci.org/xxjwxc/gormt)
-[![Go Report Card](https://goreportcard.com/badge/github.com/xxjwxc/gormt)](https://goreportcard.com/report/github.com/xxjwxc/gormt)
-[![GoDoc](https://godoc.org/github.com/xxjwxc/gormt?status.svg)](https://godoc.org/github.com/xxjwxc/gormt)
+[![Build Status](https://travis-ci.org/mattlaibybit/gormt.svg?branch=master)](https://travis-ci.org/mattlaibybit/gormt)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mattlaibybit/gormt)](https://goreportcard.com/report/github.com/mattlaibybit/gormt)
+[![GoDoc](https://godoc.org/github.com/mattlaibybit/gormt?status.svg)](https://godoc.org/github.com/mattlaibybit/gormt)
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go) 
  
 ## [中文文档](README_zh_cn.md)
@@ -27,10 +27,10 @@
 ## install
 
 ```
-go get -u -v github.com/xxjwxc/gormt@master
+go get -u -v github.com/mattlaibybit/gormt@master
 ```
 
-or: [Dowloading](https://github.com/xxjwxc/gormt/releases)
+or: [Dowloading](https://github.com/mattlaibybit/gormt/releases)
 
 --------
 
@@ -112,7 +112,7 @@ Flags:
 - INDEX	Create index with or without name, same name creates composite indexes
 - UNIQUE_INDEX	Like INDEX, create unique index
 - Support foreign key related properties [Support export gorm.model>>>](doc/export.md)
-- Support function export (foreign key, association, index , unique and more)[Support export function >>>](https://github.com/xxjwxc/gormt/blob/master/data/view/genfunc/genfunc_test.go)
+- Support function export (foreign key, association, index , unique and more)[Support export function >>>](https://github.com/mattlaibybit/gormt/blob/master/data/view/genfunc/genfunc_test.go)
 - model.Condition{} sql link
 
 ### You can enrich data types in [def](data/view/cnf/def.go) 
@@ -182,8 +182,8 @@ func (obj *_UserAccountTblMgr) FetchByPrimaryKey(ID int) (result UserAccountTbl,
 
 ```
 
-### [more>>>](https://github.com/xxjwxc/gormt/tree/master/doc/func.md)
-### [how to use call style>>>](https://github.com/xxjwxc/gormt/blob/master/data/view/genfunc/genfunc_test.go)
+### [more>>>](https://github.com/mattlaibybit/gormt/tree/master/doc/func.md)
+### [how to use call style>>>](https://github.com/mattlaibybit/gormt/blob/master/data/view/genfunc/genfunc_test.go)
 
 ## 7. page 
 ### [Use of paging query in gormt](https://xiaojujiang.blog.csdn.net/article/details/122315454?spm=1001.2014.3001.5502)
@@ -222,12 +222,12 @@ CHCP 65001
 
 ![4](/image/gormt/4.jpg)
 
-[Download](https://github.com/xxjwxc/gormt/releases/download/v0.3.8/v1.0.zip)
+[Download](https://github.com/mattlaibybit/gormt/releases/download/v0.3.8/v1.0.zip)
 
 
 
-- ###### [link](https://xxjwxc.github.io/post/gormtools/)
+- ###### [link](https://mattlaibybit.github.io/post/gormtools/)
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/xxjwxc/gormt.svg)](https://starchart.cc/xxjwxc/gormt)
+[![Stargazers over time](https://starchart.cc/mattlaibybit/gormt.svg)](https://starchart.cc/mattlaibybit/gormt)

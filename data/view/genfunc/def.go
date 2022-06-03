@@ -11,12 +11,12 @@ func (m *{{.StructName}}) TableName() string {
     package {{.PackageName}}
 type Option struct {
 	Or    bool
-	query string
-	args  interface{}
+	Query string
+	Args  interface{}
 }
-type _BaseQuery struct {
+type BaseQuery struct {
 	OrStatus    bool
-	expressions []Option
+	Expressions []Option
 	PageInfo    *PageInfo
 }
 type PageInfo struct {
@@ -36,89 +36,99 @@ var {{.StructName}}Columns = struct { {{range $em := .Em}}
 `
 
 	genlogic = `{{$obj := .}}{{$list := $obj.Em}}
-type _{{$obj.StructName}}Options struct {
-	*_BaseQuery
+type _{{$obj.StructName}}QueryOptions  struct {
+	*domain.BaseQuery
+}
+
+func New{{$obj.StructName}}QueryOptions() *_{{$obj.StructName}}QueryOptions {
+	return &_{{$obj.StructName}}QueryOptions{
+		BaseQuery: new(domain.BaseQuery),
+	}
+}
+
+func (options *_{{$obj.StructName}}QueryOptions ) GetBaseQuery() *domain.BaseQuery {
+	return options.BaseQuery
 }
 
 // GetTableName get sql table name.获取数据库名字
-func (options *_{{$obj.StructName}}Options) GetTableName() string {
+func (options *_{{$obj.StructName}}QueryOptions ) GetTableName() string {
 	return "{{GetTablePrefixName $obj.TableName}}"
 }
 
 
 {{range $oem := $obj.Em}}
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}In({{CapLowercase $oem.ColStructName}}s []{{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}In({{CapLowercase $oem.ColStructName}}s []{{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} in (?)",
-		args:  {{CapLowercase $oem.ColStructName}}s ,
+		Query: "{{$oem.ColName}} in (?)",
+		Args:  {{CapLowercase $oem.ColStructName}}s ,
 	})
 	options.OrStatus = false
 	return options
 }
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Eq({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Eq({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} = ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} = ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Gt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} > ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} > ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Gte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} >= ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} >= ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Lt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} < ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} < ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Lte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} <= ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} <= ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 
-func (options *_{{$obj.StructName}}Options) With{{$oem.ColStructName}}Ne({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}Options {
-	options.expressions = append(options.expressions, Option{
+func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Ne({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, domain.Option{
 		Or:    options.OrStatus,
-		query: "{{$oem.ColName}} != ?",
-		args:  {{CapLowercase $oem.ColStructName}},
+		Query: "{{$oem.ColName}} != ?",
+		Args:  {{CapLowercase $oem.ColStructName}},
 	})
 	options.OrStatus = false
 	return options
 }
 {{end}}
-func  (options *_{{$obj.StructName}}Options)  Or() *_{{$obj.StructName}}Options{
+func  (options *_{{$obj.StructName}}QueryOptions )  Or() *_{{$obj.StructName}}QueryOptions {
 	options.OrStatus = true
 	return options
 }

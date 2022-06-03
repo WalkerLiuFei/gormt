@@ -313,7 +313,7 @@ func (m *_Model) getColumnsKeyMulti(tableName, col string) (isMulti bool, isFind
 
 // ///////////////////////// func
 func (m *_Model) generateFunc() (genOut []GenOutInfo) {
-	// getn base
+	// gen base
 	tmpl, err := template.New("gen_base").Funcs(template.FuncMap{"GetVV": func() string { return "`%v`" }}).Parse(genfunc.GetGenBaseTemp())
 	if err != nil {
 		panic(err)
@@ -328,19 +328,19 @@ func (m *_Model) generateFunc() (genOut []GenOutInfo) {
 	// -------end------
 
 	// gen page 分页查询的基础
-	if config.GetIsOutPage() {
-		genPage, err := template.New("gen_page").Parse(genfunc.GetGenPageTemp())
-		if err != nil {
-			panic(err)
-		}
-
-		var bufPage bytes.Buffer
-		genPage.Execute(&bufPage, m.info)
-		genOut = append(genOut, GenOutInfo{
-			FileName: "gen.page.go",
-			FileCtx:  bufPage.String(),
-		})
-	}
+	//if config.GetIsOutPage() {
+	//	genPage, err := template.New("gen_page").Parse(genfunc.GetGenPageTemp())
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//
+	//	var bufPage bytes.Buffer
+	//	genPage.Execute(&bufPage, m.info)
+	//	genOut = append(genOut, GenOutInfo{
+	//		FileName: "gen.page.go",
+	//		FileCtx:  bufPage.String(),
+	//	})
+	//}
 	// -------end------
 
 	for _, tab := range m.info.TabList {
@@ -429,7 +429,9 @@ func (m *_Model) generateFunc() (genOut []GenOutInfo) {
 		data.Primary = append(data.Primary, uniqueIndex...)
 		data.Index = append(data.Index, index...)
 		tmpl, err := template.New("gen_logic").
-			Funcs(template.FuncMap{"GenPreloadList": GenPreloadList, "GenFListIndex": GenFListIndex, "CapLowercase": CapLowercase, "GetTablePrefixName": GetTablePrefixName}).
+			Funcs(template.FuncMap{
+				/**"GenPreloadList": GenPreloadList,*/
+				"GenFListIndex": GenFListIndex, "CapLowercase": CapLowercase, "GetTablePrefixName": GetTablePrefixName}).
 			Parse(genfunc.GetGenLogicTemp())
 		if err != nil {
 			panic(err)

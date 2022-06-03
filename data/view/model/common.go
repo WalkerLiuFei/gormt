@@ -1,17 +1,13 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
-	"regexp"
-	"strings"
-	"text/template"
-
 	"github.com/mattlaibybit/gormt/data/config"
 	"github.com/mattlaibybit/gormt/data/view/cnf"
-	"github.com/mattlaibybit/gormt/data/view/genfunc"
 	"github.com/mattlaibybit/public/mybigcamel"
 	"github.com/mattlaibybit/public/tools"
+	"regexp"
+	"strings"
 )
 
 // getCamelName Big Hump or Capital Letter.大驼峰或者首字母大写
@@ -189,20 +185,20 @@ func buildFList(list *[]FList, key ColumnsKey, keyName, tp, colName string) {
 }
 
 // GenPreloadList 生成list
-func GenPreloadList(list []PreloadInfo, multi bool) string {
-	if len(list) > 0 {
-		tmpl, err := template.New("gen_preload").Parse(genfunc.GetGenPreloadTemp(multi))
-		if err != nil {
-			panic(err)
-		}
-		var buf bytes.Buffer
-		tmpl.Execute(&buf, list)
-
-		return buf.String()
-	}
-
-	return ""
-}
+//func GenPreloadList(list []PreloadInfo, multi bool) string {
+//	if len(list) > 0 {
+//		tmpl, err := template.New("gen_preload").Parse(genfunc.GetGenPreloadTemp(multi))
+//		if err != nil {
+//			panic(err)
+//		}
+//		var buf bytes.Buffer
+//		tmpl.Execute(&buf, list)
+//
+//		return buf.String()
+//	}
+//
+//	return ""
+//}
 
 // GenFListIndex 生成list status(1:获取函数名,2:获取参数列表,3:获取sql case,4:值列表)
 func GenFListIndex(info FList, status int) string {

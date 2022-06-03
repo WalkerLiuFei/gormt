@@ -20,14 +20,14 @@ func GetGenLogicTemp() string {
 	return genlogic
 }
 
-// GetGenPreloadTemp get gen preload template str
-func GetGenPreloadTemp(multi bool) string {
-	if multi {
-		return genPreloadMulti
-	}
-	return genPreload
-}
+//// GetGenPreloadTemp get gen preload template str
+//func GetGenPreloadTemp(multi bool) string {
+//	if multi {
+//		return genPreloadMulti
+//	}
+//	return genPreload
+//}
 
-func GetGenPageTemp() string {
-	return genPage
-}
+//func GetGenPageTemp() string {
+//	return genPage
+//}

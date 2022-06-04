@@ -3,10 +3,11 @@ package genfunc
 const (
 	genTnf = `
 // TableName get sql table name.获取数据库表名
-func (m *{{.StructName}}) TableName() string {
+func (m *XXX_{{.StructName}}) TableName() string {
 	return "{{.TableName}}"
 }
 `
+
 	genBase = `
     package {{.PackageName}}
 type Option struct {
@@ -25,6 +26,56 @@ type PageInfo struct {
 }
 
 `
+
+	genImplementation = `
+
+func (repo *_repository) Create{{.StructName}}(ctx context.Context, obj domain.{{.StructName}}) error {
+	daoObject := &XXX_{{.StructName}}{}
+	if err := copier.Copy(daoObject, obj); err != nil {
+		return err
+	}
+	return repo.db.Model(&XXX_{{.StructName}}{}).Create(daoObject).Error
+}
+
+func (repo *_repository) Query{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) ([]domain.{{.StructName}}, error) {
+	//TODO implement me
+	daoResult := make([]XXX_{{.StructName}}, 0)
+	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Find(&daoResult).Error; isUnexpectError(err) {
+		return nil, err
+	}
+
+	result := make([]domain.{{.StructName}}, len(daoResult))
+	for i, v := range daoResult {
+		if err := copier.Copy(&result[i], &v); err != nil {
+			return nil, err
+		}
+	}
+
+	return result, nil
+}
+
+func (repo *_repository) Update{{.StructName}}ByOptions(ctx context.Context, update domain.{{.StructName}}Updates, queryOptions options.BaseQueryInterface) error {
+	daoObject := &XXX_{{.StructName}}{}
+	if err := copier.Copy(daoObject, update); err != nil {
+		return err
+	}
+	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Updates(daoObject).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *_repository) Count{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) (int64, error) {
+	//TODO implement me
+	result := new(int64)
+	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Count(result).Error; err != nil || result == nil {
+		return -1, err
+	}
+
+	return *result, nil
+}
+
+`
 	genColumn = `
 // {{.StructName}}Columns get sql column name.获取数据库列名
 var {{.StructName}}Columns = struct { {{range $em := .Em}}
@@ -34,6 +85,19 @@ var {{.StructName}}Columns = struct { {{range $em := .Em}}
 	}
   
 `
+
+	// general functions.
+	genInterface = `
+    type {{.StructName}}Repository interface {
+       Create{{.StructName}}(ctx context.Context, botProfit {{.StructName}}) error
+
+	   Query{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) ([]{{.StructName}}, error)
+
+	   Update{{.StructName}}ByOptions(ctx context.Context, update {{.StructName}}Updates, queryOptions options.BaseQueryInterface) error
+
+	   Count{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) (int64, error)
+	}
+    `
 
 	genlogic = `{{$obj := .}}{{$list := $obj.Em}}
 type _{{$obj.StructName}}QueryOptions  struct {

@@ -10,6 +10,13 @@ func GetGenColumnNameTemp() string {
 	return genColumn
 }
 
+func GetGenInterfaceTemp() string {
+	return genInterface
+}
+func GetGenImplementation() string {
+	return genImplementation
+}
+
 // GetGenBaseTemp get gen base template str
 func GetGenBaseTemp() string {
 	return genBase

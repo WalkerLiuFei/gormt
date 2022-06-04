@@ -27,19 +27,22 @@ func Generate(info DBInfo) (out []GenOutInfo, m _Model) {
 	}
 
 	// struct
-	if config.GetIsOutFileByTableName() {
-		outByTable := m.GenerateByTableName()
-		out = append(out, outByTable...)
-	} else {
-		var stt GenOutInfo
-		stt.FileCtx = m.generate()
-		stt.FileName = info.DbName + ".go"
+	//if config.GetIsOutFileByTableName() {
+	outByTable := m.GenerateRepositoryByTableName()
+	out = append(out, outByTable...)
 
-		if name := config.GetOutFileName(); len(name) > 0 {
-			stt.FileName = name + ".go"
-		}
-		out = append(out, stt)
-	}
+	outDomainByTable := m.GenerateDomainByTableName()
+	out = append(out, outDomainByTable...)
+	//	} else {
+	//	var stt GenOutInfo
+	//	stt.FileCtx = m.generate()
+	//	stt.FileName = info.DbName + ".go"
+	//
+	//	if name := config.GetOutFileName(); len(name) > 0 {
+	//		stt.FileName = name + ".go"
+	//	}
+	//	out = append(out, stt)
+	//}
 
 	// ------end
 
@@ -94,8 +97,9 @@ func (m *_Model) GetPackage() genstruct.GenPackage {
 }
 
 // GetPackageByTableName Generate multiple model files based on the table name. 根据表名生成多个model文件
-func (m *_Model) GenerateByTableName() (out []GenOutInfo) {
+func (m *_Model) GenerateRepositoryByTableName() (out []GenOutInfo) {
 	if m.pkg == nil {
+		// generate repo
 		for _, tab := range m.info.TabList {
 			var pkg genstruct.GenPackage
 			pkg.SetPackage(m.info.PackageName) //package name
@@ -116,6 +120,28 @@ func (m *_Model) GenerateByTableName() (out []GenOutInfo) {
 	return
 }
 
+func (m *_Model) GenerateDomainByTableName() (out []GenOutInfo) {
+	if m.pkg == nil {
+		// generate repo
+		for _, tab := range m.info.TabList {
+			var pkg genstruct.GenPackage
+			pkg.SetPackage(m.info.PackageName) //package name
+			var sct genstruct.GenStruct
+			sct.SetTableName(tab.Name)
+			tab.Name = getTableNameWithPrefix(tab.Name)
+			sct.SetStructName(getCamelName(tab.Name)) // Big hump.大驼峰
+			sct.SetNotes(tab.Notes)
+			sct.AddElement(m.genTableElement(tab.Em)...) // build element.构造元素
+			sct.SetCreatTableStr(tab.SQLBuildStr)
+			pkg.AddStruct(sct)
+			var stt GenOutInfo
+			stt.FileCtx = pkg.GenerateDomain()
+			stt.FileName = tab.Name + "_domain.go"
+			out = append(out, stt)
+		}
+	}
+	return
+}
 func (m *_Model) generate() string {
 	m.pkg = nil
 	m.GetPackage()
@@ -202,11 +228,11 @@ func (m *_Model) genTableElement(cols []ColumnsInfo) (el []genstruct.GenElement)
 				if isPK && config.GetIsWebTagPkHidden() {
 					tmp.AddTag(_tagJSON, "-")
 				} else {
-					if config.GetWebTagType() == 0 {
-						tmp.AddTag(_tagJSON, mybigcamel.UnSmallMarshal(mybigcamel.Marshal(v.Name)))
-					} else {
-						tmp.AddTag(_tagJSON, mybigcamel.UnMarshal(v.Name))
-					}
+					//if config.GetWebTagType() == 0 {
+					//	tmp.AddTag(_tagJSON, mybigcamel.UnSmallMarshal(mybigcamel.Marshal(v.Name)))
+					//} else {
+					tmp.AddTag(_tagJSON, mybigcamel.UnMarshal(v.Name))
+					//}
 				}
 			}
 
@@ -366,7 +392,7 @@ func (m *_Model) generateFunc() (genOut []GenOutInfo) {
 				buildFList(&primary, ColumnsKeyPrimary, "", "int64", "id")
 			} else {
 				typeName := getTypeName(el.Type, el.IsNull)
-				isMulti := (len(el.Index) == 0)
+				isMulti := len(el.Index) == 0
 				isUniquePrimary := false
 				for _, v1 := range el.Index {
 					if v1.Multi {

@@ -63,6 +63,33 @@ func (e *GenElement) Generate() string {
 	return p.Generates()[0]
 }
 
+func (e *GenElement) GenerateUpdates() string {
+	var p generate.PrintAtom
+	//	if len(e.Notes) > 0 {
+	p.Add(e.Name, "*"+e.Type, "//"+e.Notes)
+	//	} else {
+	//		p.Add(e.Name, e.Type, tag)
+	//	}
+
+	return p.Generates()[0]
+}
+
+func (e *GenElement) GenerateDomainDefinition() string {
+	// Domain definition only need json tag.
+	tag := ""
+	if len(e.Tags["json"]) > 0 {
+		tag = fmt.Sprintf("`json:\"%v\"`", e.Tags["json"][0])
+	}
+
+	var p generate.PrintAtom
+	//	if len(e.Notes) > 0 {
+	p.Add(e.Name, e.Type, tag, "//"+e.Notes)
+	//	} else {
+	//		p.Add(e.Name, e.Type, tag)
+	//	}
+	return p.Generates()[0]
+}
+
 // GenerateColor Get the result data.获取结果数据
 func (e *GenElement) GenerateColor() string {
 	tag := ""
@@ -149,6 +176,22 @@ func (s *GenStruct) GenerateTableName() []string {
 	return []string{buf.String()}
 }
 
+// GenerateInterface generate interface definitions .生成通用接口定义
+func (s *GenStruct) GenerateInterface() []string {
+	tmpl, err := template.New("gen_interface").Parse(genfunc.GetGenInterfaceTemp())
+	if err != nil {
+		panic(err)
+	}
+	var data struct {
+		TableName  string
+		StructName string
+	}
+	data.TableName, data.StructName = s.TableName, s.Name
+	var buf bytes.Buffer
+	tmpl.Execute(&buf, data)
+	return []string{buf.String()}
+}
+
 // GenerateColumnName generate column name . 生成列名
 func (s *GenStruct) GenerateColumnName() []string {
 	tmpl, err := template.New("gen_tnc").Parse(genfunc.GetGenColumnNameTemp())
@@ -199,12 +242,70 @@ func (s *GenStruct) Generates() []string {
 		p.Add("******sql******/")
 	}
 	p.Add(s.Notes)
-	p.Add("type", s.Name, "struct {")
+	p.Add("type", "XXX_"+s.Name, "struct {")
 	mp := make(map[string]bool, len(s.Em))
 	for _, v := range s.Em {
 		if !mp[v.Name] {
 			mp[v.Name] = true
 			p.Add(v.Generate())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+
+func (s *GenStruct) GeneratesUpdates() []string {
+	var p generate.PrintAtom
+	if config.GetIsOutSQL() {
+		p.Add("/******sql******")
+		p.Add(s.SQLBuildStr)
+		p.Add("******sql******/")
+	}
+	p.Add(s.Notes)
+	p.Add("type", s.Name+"Updates", "struct {")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateUpdates())
+		}
+	}
+	p.Add("}")
+
+	return p.Generates()
+}
+
+// GenerateTableName generate table name .生成表名
+func (s *GenStruct) GenerateGenImplementation() []string {
+	tmpl, err := template.New("gen_implementation").Parse(genfunc.GetGenImplementation())
+	if err != nil {
+		panic(err)
+	}
+	var data struct {
+		TableName  string
+		StructName string
+	}
+	data.TableName, data.StructName = s.TableName, s.Name
+	var buf bytes.Buffer
+	tmpl.Execute(&buf, data)
+	return []string{buf.String()}
+}
+
+func (s *GenStruct) GeneratesDomainDefinition() []string {
+	var p generate.PrintAtom
+	if config.GetIsOutSQL() {
+		p.Add("/******sql******")
+		p.Add(s.SQLBuildStr)
+		p.Add("******sql******/")
+	}
+	p.Add(s.Notes)
+	p.Add("type", s.Name, "struct {")
+	mp := make(map[string]bool, len(s.Em))
+	for _, v := range s.Em {
+		if !mp[v.Name] {
+			mp[v.Name] = true
+			p.Add(v.GenerateDomainDefinition())
 		}
 	}
 	p.Add("}")
@@ -257,6 +358,55 @@ func (p *GenPackage) AddStruct(st GenStruct) {
 	p.Structs = append(p.Structs, st)
 }
 
+func (p *GenPackage) GenerateDomain() string {
+	p.genimport() // auto add import .补充 import
+
+	var pa generate.PrintAtom
+	pa.Add("package", p.Name)
+	// add import
+	if p.Imports != nil {
+		pa.Add("import (")
+		for _, v := range p.Imports {
+			pa.Add(v)
+		}
+		pa.Add(")")
+	}
+	// -----------end
+	// add struct
+	for _, v := range p.Structs {
+
+		for _, v1 := range v.GeneratesDomainDefinition() {
+			pa.Add(v1)
+		}
+
+		for _, v1 := range v.GeneratesUpdates() {
+			pa.Add(v1)
+		}
+
+		if config.GetIsTableName() { // add table name func
+			for _, v1 := range v.GenerateInterface() {
+				pa.Add(v1)
+			}
+		}
+
+	}
+	// -----------end
+
+	// add func
+	for _, v := range p.FuncStrList {
+		pa.Add(v)
+	}
+	// -----------end
+
+	// output.输出
+	strOut := ""
+	for _, v := range pa.Generates() {
+		strOut += v + "\n"
+	}
+
+	return strOut
+}
+
 // Generate Get the result data.获取结果数据
 func (p *GenPackage) Generate() string {
 	p.genimport() // auto add import .补充 import
@@ -277,9 +427,12 @@ func (p *GenPackage) Generate() string {
 		for _, v1 := range v.Generates() {
 			pa.Add(v1)
 		}
-
 		if config.GetIsTableName() { // add table name func
 			for _, v1 := range v.GenerateTableName() {
+				pa.Add(v1)
+			}
+
+			for _, v1 := range v.GenerateGenImplementation() {
 				pa.Add(v1)
 			}
 		}

@@ -6,6 +6,9 @@ const (
 func (m *XXX_{{.StructName}}) TableName() string {
 	return "{{.TableName}}"
 }
+func (m *XXX_{{.StructName}}Updates) TableName() string {
+	return "{{.TableName}}"
+}
 `
 
 	genBase = `
@@ -55,11 +58,11 @@ func (repo *_repository) Query{{.StructName}}ByOptions(ctx context.Context, quer
 }
 
 func (repo *_repository) Update{{.StructName}}ByOptions(ctx context.Context, update domain.{{.StructName}}Updates, queryOptions options.BaseQueryInterface) error {
-	daoObject := &XXX_{{.StructName}}{}
+	daoObject := &XXX_{{.StructName}}Updates{}
 	if err := copier.Copy(daoObject, update); err != nil {
 		return err
 	}
-	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Updates(daoObject).Error; err != nil {
+	if err := options.ApplyOptions(ctx, repo.db.Model(daoObject), queryOptions.GetBaseQuery()).UpdateColumns(daoObject).Error; err != nil {
 		return err
 	}
 	return nil

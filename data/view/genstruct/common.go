@@ -255,7 +255,7 @@ func (s *GenStruct) Generates() []string {
 	return p.Generates()
 }
 
-func (s *GenStruct) GeneratesUpdates() []string {
+func (s *GenStruct) GeneratesUpdates(withXXPrefix bool) []string {
 	var p generate.PrintAtom
 	if config.GetIsOutSQL() {
 		p.Add("/******sql******")
@@ -263,7 +263,11 @@ func (s *GenStruct) GeneratesUpdates() []string {
 		p.Add("******sql******/")
 	}
 	p.Add(s.Notes)
-	p.Add("type", s.Name+"Updates", "struct {")
+	if withXXPrefix {
+		p.Add("type", "XXX_"+s.Name+"Updates", "struct {")
+	} else {
+		p.Add("type", s.Name+"Updates", "struct {")
+	}
 	mp := make(map[string]bool, len(s.Em))
 	for _, v := range s.Em {
 		if !mp[v.Name] {
@@ -379,7 +383,7 @@ func (p *GenPackage) GenerateDomain() string {
 			pa.Add(v1)
 		}
 
-		for _, v1 := range v.GeneratesUpdates() {
+		for _, v1 := range v.GeneratesUpdates(false) {
 			pa.Add(v1)
 		}
 
@@ -429,6 +433,9 @@ func (p *GenPackage) Generate() string {
 		}
 		if config.GetIsTableName() { // add table name func
 			for _, v1 := range v.GenerateTableName() {
+				pa.Add(v1)
+			}
+			for _, v1 := range v.GeneratesUpdates(true) {
 				pa.Add(v1)
 			}
 

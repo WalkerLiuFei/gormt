@@ -37,10 +37,10 @@ func (repo *_repository) Create{{.StructName}}(ctx context.Context, obj domain.{
 	if err := copier.Copy(daoObject, obj); err != nil {
 		return err
 	}
-	return repo.db.Model(&XXX_{{.StructName}}{}).Create(daoObject).Error
+	return repo.db.WithContext(ctx).Model(&XXX_{{.StructName}}{}).Create(daoObject).Error
 }
 
-func (repo *_repository) Query{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) ([]domain.{{.StructName}}, error) {
+func (repo *_repository) Query{{.StructName}}ByOptions(ctx context.Context, queryOptions *options.{{.StructName}}QueryOptions) ([]domain.{{.StructName}}, error) {
 	//TODO implement me
 	daoResult := make([]XXX_{{.StructName}}, 0)
 	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Find(&daoResult).Error; isUnexpectError(err) {
@@ -57,7 +57,7 @@ func (repo *_repository) Query{{.StructName}}ByOptions(ctx context.Context, quer
 	return result, nil
 }
 
-func (repo *_repository) Update{{.StructName}}ByOptions(ctx context.Context, update domain.{{.StructName}}Updates, queryOptions options.BaseQueryInterface) error {
+func (repo *_repository) Update{{.StructName}}ByOptions(ctx context.Context, update domain.{{.StructName}}Updates, queryOptions *options.{{.StructName}}QueryOptions) error {
 	daoObject := &XXX_{{.StructName}}Updates{}
 	if err := copier.Copy(daoObject, update); err != nil {
 		return err
@@ -68,7 +68,7 @@ func (repo *_repository) Update{{.StructName}}ByOptions(ctx context.Context, upd
 	return nil
 }
 
-func (repo *_repository) Count{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) (int64, error) {
+func (repo *_repository) Count{{.StructName}}ByOptions(ctx context.Context, queryOptions *options.{{.StructName}}QueryOptions) (int64, error) {
 	//TODO implement me
 	result := new(int64)
 	if err := options.ApplyOptions(ctx, repo.db.Model(&XXX_{{.StructName}}{}), queryOptions.GetBaseQuery()).Count(result).Error; err != nil || result == nil {
@@ -77,7 +77,6 @@ func (repo *_repository) Count{{.StructName}}ByOptions(ctx context.Context, quer
 
 	return *result, nil
 }
-
 `
 	genColumn = `
 // {{.StructName}}Columns get sql column name.获取数据库列名
@@ -94,38 +93,38 @@ var {{.StructName}}Columns = struct { {{range $em := .Em}}
     type {{.StructName}}Repository interface {
        Create{{.StructName}}(ctx context.Context, botProfit {{.StructName}}) error
 
-	   Query{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) ([]{{.StructName}}, error)
+	   Query{{.StructName}}ByOptions(ctx context.Context, queryOptions *options.{{.StructName}}QueryOptions) ([]{{.StructName}}, error)
 
-	   Update{{.StructName}}ByOptions(ctx context.Context, update {{.StructName}}Updates, queryOptions options.BaseQueryInterface) error
+	   Update{{.StructName}}ByOptions(ctx context.Context, update {{.StructName}}Updates, queryOptions *options.{{.StructName}}QueryOptions) error
 
-	   Count{{.StructName}}ByOptions(ctx context.Context, queryOptions options.BaseQueryInterface) (int64, error)
+	   Count{{.StructName}}ByOptions(ctx context.Context, queryOptions *options.{{.StructName}}QueryOptions) (int64, error)
 	}
     `
 
 	genlogic = `{{$obj := .}}{{$list := $obj.Em}}
-type _{{$obj.StructName}}QueryOptions  struct {
-	*domain.BaseQuery
+type {{$obj.StructName}}QueryOptions  struct {
+	*BaseQuery
 }
 
-func New{{$obj.StructName}}QueryOptions() *_{{$obj.StructName}}QueryOptions {
-	return &_{{$obj.StructName}}QueryOptions{
-		BaseQuery: new(domain.BaseQuery),
+func New{{$obj.StructName}}QueryOptions() *{{$obj.StructName}}QueryOptions {
+	return &{{$obj.StructName}}QueryOptions{
+		BaseQuery: new(BaseQuery),
 	}
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) GetBaseQuery() *domain.BaseQuery {
+func (options *{{$obj.StructName}}QueryOptions ) GetBaseQuery() *BaseQuery {
 	return options.BaseQuery
 }
 
 // GetTableName get sql table name.获取数据库名字
-func (options *_{{$obj.StructName}}QueryOptions ) GetTableName() string {
+func (options *{{$obj.StructName}}QueryOptions ) GetTableName() string {
 	return "{{GetTablePrefixName $obj.TableName}}"
 }
 
 
 {{range $oem := $obj.Em}}
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}In({{CapLowercase $oem.ColStructName}}s []{{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}In({{CapLowercase $oem.ColStructName}}s []{{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} in (?)",
 		Args:  {{CapLowercase $oem.ColStructName}}s ,
@@ -134,8 +133,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}In({
 	return options
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Eq({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Eq({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} = ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -145,8 +144,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Eq({
 }
 
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} > ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -155,8 +154,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gt({
 	return options
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} >= ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -165,8 +164,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Gte(
 	return options
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lt({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} < ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -175,8 +174,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lt({
 	return options
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lte({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} <= ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -185,8 +184,8 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Lte(
 	return options
 }
 
-func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Ne({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *_{{$obj.StructName}}QueryOptions  {
-	options.Expressions = append(options.Expressions, domain.Option{
+func (options *{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Ne({{CapLowercase $oem.ColStructName}} {{$oem.Type}}) *{{$obj.StructName}}QueryOptions  {
+	options.Expressions = append(options.Expressions, Option{
 		Or:    options.OrStatus,
 		Query: "{{$oem.ColName}} != ?",
 		Args:  {{CapLowercase $oem.ColStructName}},
@@ -194,8 +193,15 @@ func (options *_{{$obj.StructName}}QueryOptions ) With{{$oem.ColStructName}}Ne({
 	options.OrStatus = false
 	return options
 }
+func (options *{{$obj.StructName}}QueryOptions ) OrderBy{{$oem.ColStructName}}(desc bool) *{{$obj.StructName}}QueryOptions  {
+	options.OrderByInfo = append(options.OrderByInfo, OrderByInfo{
+		Column:  "{{$oem.ColName}}",
+		Desc: desc,
+	})
+	return options
+}
 {{end}}
-func  (options *_{{$obj.StructName}}QueryOptions )  Or() *_{{$obj.StructName}}QueryOptions {
+func  (options *{{$obj.StructName}}QueryOptions )  Or() *{{$obj.StructName}}QueryOptions {
 	options.OrStatus = true
 	return options
 }

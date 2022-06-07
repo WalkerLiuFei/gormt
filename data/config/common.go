@@ -55,9 +55,9 @@ var _map = Config{
 var configPath string
 
 func init() {
-	configPath = path.Join(tools.GetCurrentDirectory(), "config.yml") // 先找本程序文件夹
-	if !tools.CheckFileIsExist(configPath) {                          // dont find it
-		configPath = path.Join(tools.GetModelPath(), "config.yml")
+	configPath = path.Join(tools.GetCurrentDirectory(), "gormt.yml") // 先找本程序文件夹
+	if !tools.CheckFileIsExist(configPath) {                         // dont find it
+		configPath = path.Join(tools.GetModelPath(), "gormt.yml")
 		if !tools.CheckFileIsExist(configPath) {
 			mylog.ErrorString("config.yml not exit. using default config")
 		}
